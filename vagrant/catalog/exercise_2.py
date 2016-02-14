@@ -16,3 +16,8 @@ for puppy in session.query(Puppy).filter(
 print "\nQuery 3. Query all puppies by ascending weight\n"
 for puppy in session.query(Puppy).order_by(Puppy.weight.asc()):
     print puppy.name, round(puppy.weight, 2)
+
+print "\nQuery 4. Query all puppies grouped by the shelter in which they are staying\n"
+for puppy in session.query(Puppy).join(Puppy.shelter) \
+        .order_by(Shelter.name).order_by(Puppy.name):
+    print puppy.shelter.name, puppy.name
