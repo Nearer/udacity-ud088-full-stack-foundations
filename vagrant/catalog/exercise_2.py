@@ -12,3 +12,7 @@ for puppy in session.query(Puppy).filter(
                 Puppy.dateOfBirth < (datetime.now() - timedelta(weeks=24))
 ).order_by(Puppy.dateOfBirth.asc()):
     print puppy.name, puppy.dateOfBirth
+
+print "\nQuery 3. Query all puppies by ascending weight\n"
+for puppy in session.query(Puppy).order_by(Puppy.weight.asc()):
+    print puppy.name, round(puppy.weight, 2)
