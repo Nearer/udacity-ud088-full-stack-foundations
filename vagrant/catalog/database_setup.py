@@ -27,7 +27,7 @@ class Shelter(Base):
             String(100),
             nullable=False
     )
-    zip_code = Column(
+    zipCode = Column(
             Integer,
             nullable=False
     )
@@ -51,7 +51,10 @@ class Puppy(Base):
             String(100),
             nullable=False
     )
-    date_of_birth = Column(
+    picture = Column(
+            String(250)
+    )
+    dateOfBirth = Column(
             Date,
             nullable=True
     )
