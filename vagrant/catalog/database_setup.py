@@ -1,4 +1,4 @@
-from sqlalchemy import Column, ForeignKey, Integer, String, Float, Text
+from sqlalchemy import Column, ForeignKey, Integer, String, Float, Text, Table, PrimaryKeyConstraint
 from sqlalchemy.types import Date
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
@@ -39,6 +39,18 @@ class Shelter(Base):
             primary_key=True
     )
 
+
+class Adopter(Base):
+    __tablename__ = 'adopter'
+    id = Column(
+            Integer,
+            primary_key=True
+    )
+    name = Column(
+            String(100),
+            nullable=False
+    )
+    puppies = relationship(Puppy, secondary=adopter_puppy)
 
 class Profile(Base):
     __tablename__ = 'profile'
@@ -92,7 +104,14 @@ class Puppy(Base):
             ForeignKey(Profile.id)
     )
     profile = relationship(Profile, uselist=False, backref='puppy')
+    adopters = relationship(Adopter, secondary=adopter_puppy)
 
+
+adopter_puppy = Table('adopter_puppy', Base.metadata,
+                      Column('adopter_id', Integer, ForeignKey(Adopter.id)),
+                      Column('puppy_id', Integer, ForeignKey(Puppy.id)),
+                      PrimaryKeyConstraint('adopter_id', 'puppy_id')
+                      )
 
 engine = create_engine('sqlite:///{}.db'.format(name))
 Base.metadata.create_all(engine)
