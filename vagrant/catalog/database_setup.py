@@ -1,5 +1,4 @@
-import sys
-from sqlalchemy import Column, ForeignKey, Integer, String, Numeric
+from sqlalchemy import Column, ForeignKey, Integer, String, Float, Text
 from sqlalchemy.types import Date
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
@@ -10,7 +9,7 @@ name = 'puppies'  # db name goes here
 
 
 class Shelter(Base):
-    __tablename__ = 'shelters'
+    __tablename__ = 'shelter'
     name = Column(
             String(100),
             nullable=False
@@ -41,8 +40,28 @@ class Shelter(Base):
     )
 
 
+class Profile(Base):
+    __tablename__ = 'profile'
+    id = Column(
+            Integer,
+            primary_key=True
+    )
+    picture = Column(
+            String(250),
+            nullable=True
+    )
+    description = Column(
+            Text,
+            nullable=True
+    )
+    specialNeeds = Column(
+            Text,
+            nullable=True
+    )
+
+
 class Puppy(Base):
-    __tablename__ = 'puppies'
+    __tablename__ = 'puppy'
     id = Column(
             Integer,
             primary_key=True
@@ -50,9 +69,6 @@ class Puppy(Base):
     name = Column(
             String(100),
             nullable=False
-    )
-    picture = Column(
-            String(250)
     )
     dateOfBirth = Column(
             Date,
@@ -63,14 +79,20 @@ class Puppy(Base):
             nullable=False
     )
     weight = Column(
-            Numeric(10),
+            Float,
             nullable=False
     )
     shelter_id = Column(
             Integer,
-            ForeignKey('shelters.id')
+            ForeignKey('shelter.id')
     )
     shelter = relationship(Shelter)
+    profile_id = Column(
+            Integer,
+            ForeignKey(Profile.id)
+    )
+    profile = relationship(Profile, uselist=False, backref='puppy')
+
 
 engine = create_engine('sqlite:///{}.db'.format(name))
 Base.metadata.create_all(engine)
