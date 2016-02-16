@@ -1,15 +1,13 @@
-from sqlalchemy import Column, ForeignKey, Integer, String, Float, Text, Table, PrimaryKeyConstraint
-from sqlalchemy.types import Date
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import Column, String, Integer, Float, ForeignKey, Date, Text, Table
 from sqlalchemy.orm import relationship
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
 
 Base = declarative_base()
-name = 'puppies'  # db name goes here
-
 
 class Shelter(Base):
-    __tablename__ = 'shelter'
+    __tablename__ = 'shelters'
     name = Column(
             String(100),
             nullable=False
@@ -40,8 +38,15 @@ class Shelter(Base):
     )
 
 
+adopters_puppies = Table(
+        'adopters_puppies', Base.metadata,
+        Column('adopter_id', ForeignKey('adopters.id'), primary_key=True),
+        Column('puppy_id', ForeignKey('puppies.id'), primary_key=True)
+)
+
+
 class Adopter(Base):
-    __tablename__ = 'adopter'
+    __tablename__ = 'adopters'
     id = Column(
             Integer,
             primary_key=True
@@ -50,10 +55,11 @@ class Adopter(Base):
             String(100),
             nullable=False
     )
-    puppies = relationship(Puppy, secondary=adopter_puppy)
+    puppies = relationship('Puppy', secondary=adopters_puppies, back_populates='adopters')
+
 
 class Profile(Base):
-    __tablename__ = 'profile'
+    __tablename__ = 'profiles'
     id = Column(
             Integer,
             primary_key=True
@@ -73,7 +79,7 @@ class Profile(Base):
 
 
 class Puppy(Base):
-    __tablename__ = 'puppy'
+    __tablename__ = 'puppies'
     id = Column(
             Integer,
             primary_key=True
@@ -96,22 +102,23 @@ class Puppy(Base):
     )
     shelter_id = Column(
             Integer,
-            ForeignKey('shelter.id')
+            ForeignKey('shelters.id')
     )
+
     shelter = relationship(Shelter)
     profile_id = Column(
             Integer,
             ForeignKey(Profile.id)
     )
     profile = relationship(Profile, uselist=False, backref='puppy')
-    adopters = relationship(Adopter, secondary=adopter_puppy)
+    adopters = relationship('Adopter', secondary=adopters_puppies, back_populates='puppies')
 
 
-adopter_puppy = Table('adopter_puppy', Base.metadata,
-                      Column('adopter_id', Integer, ForeignKey(Adopter.id)),
-                      Column('puppy_id', Integer, ForeignKey(Puppy.id)),
-                      PrimaryKeyConstraint('adopter_id', 'puppy_id')
-                      )
+name = 'puppies'  # db name goes here
 
 engine = create_engine('sqlite:///{}.db'.format(name))
 Base.metadata.create_all(engine)
+
+Base.metadata.bind = engine
+
+DBSession = sessionmaker(bind=engine)

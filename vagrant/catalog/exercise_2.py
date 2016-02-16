@@ -1,6 +1,9 @@
-from database_setup import Shelter, Puppy
-from puppy_populator import session
 from datetime import timedelta, datetime
+
+from header import DBSession
+from models import Puppy, Shelter
+
+session = DBSession()
 
 print "Query 1: Query all of the puppies and return the results in ascending alphabetical order\n"
 for puppy in session.query(Puppy).order_by(Puppy.name):

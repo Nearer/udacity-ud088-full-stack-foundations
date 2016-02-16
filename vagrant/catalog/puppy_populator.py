@@ -1,14 +1,7 @@
-from sqlalchemy.orm import sessionmaker
-from database_setup import engine
-from database_setup import Base, Shelter, Puppy, Profile
-# from flask.ext.sqlalchemy import SQLAlchemy
-from random import randint
 import datetime
 import random
-
-Base.metadata.bind = engine
-
-DBSession = sessionmaker(bind=engine)
+from random import randint
+from models import Puppy, Shelter, Profile, DBSession
 
 session = DBSession()
 
