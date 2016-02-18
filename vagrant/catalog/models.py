@@ -3,8 +3,10 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
+from sqlalchemy.ext.hybrid import hybrid_property
 
 Base = declarative_base()
+
 
 class Shelter(Base):
     __tablename__ = 'shelters'
@@ -37,6 +39,15 @@ class Shelter(Base):
             primary_key=True
     )
     puppies = relationship('Puppy', back_populates='shelter')
+    maximum_capacity = Column(
+            Integer,
+            nullable=False
+    )
+
+    @hybrid_property
+    def current_occupancy(self):
+        return len(self.puppies)
+
 
 adopters_puppies = Table(
         'adopters_puppies', Base.metadata,
@@ -106,14 +117,14 @@ class Puppy(Base):
             ForeignKey('shelters.id')
     )
 
-    shelter = relationship(Shelter, back_populates='puppies')
+    shelter = relationship('Shelter', back_populates='puppies')
     profile_id = Column(
             Integer,
             ForeignKey('profiles.id')
     )
-    profile = relationship(Profile, uselist=False, back_populates='puppy',
+    profile = relationship('Profile', uselist=False, back_populates='puppy',
                            cascade='all, delete')
-    adopters = relationship('Adopter', secondary=adopters_puppies, back_populates='puppies')
+    adopters = relationship('Adopter', secondary='adopters_puppies', back_populates='puppies')
 
 
 name = 'puppies'  # db name goes here
