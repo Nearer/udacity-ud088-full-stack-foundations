@@ -36,7 +36,7 @@ class Shelter(Base):
             Integer,
             primary_key=True
     )
-
+    puppies = relationship('Puppy', back_populates='shelter')
 
 adopters_puppies = Table(
         'adopters_puppies', Base.metadata,
@@ -106,7 +106,7 @@ class Puppy(Base):
             ForeignKey('shelters.id')
     )
 
-    shelter = relationship(Shelter)
+    shelter = relationship(Shelter, back_populates='puppies')
     profile_id = Column(
             Integer,
             ForeignKey('profiles.id')
