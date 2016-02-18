@@ -76,6 +76,7 @@ class Profile(Base):
             Text,
             nullable=True
     )
+    puppy = relationship('Puppy', back_populates='profile', uselist=False)
 
 
 class Puppy(Base):
@@ -108,9 +109,10 @@ class Puppy(Base):
     shelter = relationship(Shelter)
     profile_id = Column(
             Integer,
-            ForeignKey(Profile.id)
+            ForeignKey('profiles.id')
     )
-    profile = relationship(Profile, uselist=False, backref='puppy')
+    profile = relationship(Profile, uselist=False, back_populates='puppy',
+                           cascade='all, delete')
     adopters = relationship('Adopter', secondary=adopters_puppies, back_populates='puppies')
 
 

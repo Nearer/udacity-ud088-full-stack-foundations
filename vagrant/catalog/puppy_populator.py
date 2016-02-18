@@ -68,17 +68,17 @@ def CreateRandomWeight():
 for i, x in enumerate(male_names):
     profile = Profile()
     profile.picture = random.choice(puppy_images)
-    new_puppy = Puppy(name=x, gender="male", dateOfBirth=CreateRandomAge(), profile_id=profile.id,
+    new_puppy = Puppy(name=x, gender="male", dateOfBirth=CreateRandomAge(),
                       shelter_id=randint(1, 5), weight=CreateRandomWeight())
+    new_puppy.profile = profile
     session.add(new_puppy)
-    session.add(profile)
     session.commit()
 
 for i, x in enumerate(female_names):
     profile = Profile()
     profile.picture = random.choice(puppy_images)
-    new_puppy = Puppy(name=x, gender="female", dateOfBirth=CreateRandomAge(), profile_id=profile.id,
+    new_puppy = Puppy(name=x, gender="female", dateOfBirth=CreateRandomAge(),
                       shelter_id=randint(1, 5), weight=CreateRandomWeight())
+    new_puppy.profile = profile
     session.add(new_puppy)
-    session.add(profile)
     session.commit()
