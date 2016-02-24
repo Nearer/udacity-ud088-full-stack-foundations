@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% block title %}Restaurants{% endblock %}
+{% block body %}
+{% for r in restaurants %}
+<p>{{r.name}}</p>
+{% endfor %}
+{% endblock %}

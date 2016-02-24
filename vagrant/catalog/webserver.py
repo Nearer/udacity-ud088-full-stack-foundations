@@ -1,12 +1,24 @@
 import cgi
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
-
+from database_setup import DBSession, Restaurant
 from jinja2 import Environment, PackageLoader
 
 jinja2_env = Environment(loader=PackageLoader('jinja2_templates', 'templates'))
 
 
 class WebServerHandler(BaseHTTPRequestHandler):
+    def get_template(self, template_name):
+        t = jinja2_env.get_template(template_name)
+        return t
+
+    def render_str(self, template_name, **kwargs):
+        t = self.get_template(template_name)
+        return t.render(**kwargs)
+
+    def render_page(self, template, **kwargs):
+        page_str = self.render_str(template, **kwargs)
+        self.wfile.write(page_str)
+
     def get_hello(self):
         self.send_response(200)
         self.send_header('Content-type', 'text/html')
@@ -61,12 +73,22 @@ class WebServerHandler(BaseHTTPRequestHandler):
         except Exception as e:
             print('An error occurred: {}'.format(e))
 
+    def get_restaurants(self):
+        self.send_response(200)
+        self.send_header('Content-type', 'text/html')
+        self.end_headers()
+        session = DBSession()
+        restaurants = session.query(Restaurant).all()
+        self.render_page('restaurants.html', restaurants=restaurants)
+
     def do_GET(self):
         try:
             if self.path.endswith('/hello'):
                 self.get_hello()
             if self.path.endswith('/hola'):
                 self.get_hola()
+            if self.path.endswith('/restaurants'):
+                self.get_restaurants()
         except IOError:
             self.send_error(404, 'File not found: {}'.self.path)
 
