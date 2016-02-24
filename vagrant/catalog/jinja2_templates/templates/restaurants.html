@@ -2,6 +2,6 @@
 {% block title %}Restaurants{% endblock %}
 {% block body %}
 {% for r in restaurants %}
-<p>{{r.name}}</p>
+{% include "restaurant.html" %}
 {% endfor %}
 {% endblock %}

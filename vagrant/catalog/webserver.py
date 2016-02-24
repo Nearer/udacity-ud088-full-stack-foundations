@@ -1,7 +1,10 @@
 import cgi
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
-from database_setup import DBSession, Restaurant
+from os import curdir, sep
+
 from jinja2 import Environment, PackageLoader
+
+from database_setup import DBSession, Restaurant
 
 jinja2_env = Environment(loader=PackageLoader('jinja2_templates', 'templates'))
 
@@ -85,12 +88,18 @@ class WebServerHandler(BaseHTTPRequestHandler):
         try:
             if self.path.endswith('/hello'):
                 self.get_hello()
-            if self.path.endswith('/hola'):
+            elif self.path.endswith('/hola'):
                 self.get_hola()
-            if self.path.endswith('/restaurants'):
+            elif self.path.endswith('/restaurants'):
                 self.get_restaurants()
+            elif self.path.endswith('.css'):
+                f = open(curdir + sep + self.path)
+                self.send_response(200)
+                self.send_header('Content-type', 'text/css')
+                self.end_headers()
+                self.wfile.write(f.read())
         except IOError:
-            self.send_error(404, 'File not found: {}'.self.path)
+            self.send_error(404, 'File not found: {}'.format(self.path))
 
     def do_POST(self):
         if self.path.endswith('/hello') or self.path.endswith('/hola'):
