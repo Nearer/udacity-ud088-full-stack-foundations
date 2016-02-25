@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{%block title %}Delete{% endblock %}
+{% block body %}
+<h1>Are you sure you want to delete {{r.name}}?</h1>
+<form method="post">
+    <input type="submit" value="Delete">
+</form>
+{% endblock %}

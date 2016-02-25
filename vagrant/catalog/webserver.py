@@ -9,6 +9,7 @@ from database_setup import DBSession, Restaurant
 
 jinja2_env = Environment(loader=PackageLoader('jinja2_templates', 'templates'))
 EDIT_REGEX = re.compile(r'/restaurants/(\d+)/edit')
+DELETE_REGEX = re.compile(r'/restaurants/(\d+)/delete')
 
 
 class WebServerHandler(BaseHTTPRequestHandler):
@@ -75,6 +76,16 @@ class WebServerHandler(BaseHTTPRequestHandler):
         else:
             self.render_page('edit_restaurant.html', r=r)
 
+    def get_restaurant_delete(self):
+        self.send_200_html()
+        session = DBSession()
+        r_id = int(DELETE_REGEX.match(self.path).group(1))
+        r = session.query(Restaurant).get(r_id)
+        if r is None:
+            self.send_error(404, 'Restaurant number {} not found.'.format(r_id))
+        else:
+            self.render_page('delete_restaurant.html', r=r)
+
     def post_restaurants_new(self):
         form = self.get_form()
         new_name = form.getvalue('name')
@@ -88,8 +99,6 @@ class WebServerHandler(BaseHTTPRequestHandler):
     def post_restaurant_edit(self):
         session = DBSession()
         r_id = int(EDIT_REGEX.match(self.path).group(1))
-        print '*****************'
-        print r_id
         r = session.query(Restaurant).get(r_id)
         if r:
             form = self.get_form()
@@ -102,6 +111,17 @@ class WebServerHandler(BaseHTTPRequestHandler):
         else:
             self.send_error(404, 'Restaurant number {} not found'.format(r_id))
 
+    def post_restaurant_delete(self):
+        session = DBSession()
+        r_id = int(DELETE_REGEX.match(self.path).group(1))
+        r = session.query(Restaurant).get(r_id)
+        if r:
+            session.delete(r)
+            session.commit()
+            self.send_redirect('/restaurants')
+        else:
+            self.send_error(404, 'Restaurant number {} not found'.format(r_id))
+
     def do_GET(self):
         try:
             if self.path.endswith('/restaurants'):
@@ -110,6 +130,8 @@ class WebServerHandler(BaseHTTPRequestHandler):
                 self.get_restaurants_new()
             elif EDIT_REGEX.match(self.path):
                 self.get_restaurant_edit()
+            elif DELETE_REGEX.match(self.path):
+                self.get_restaurant_delete()
             elif self.path.endswith('.css'):
                 self.get_css()
             else:
@@ -122,6 +144,8 @@ class WebServerHandler(BaseHTTPRequestHandler):
             self.post_restaurants_new()
         elif EDIT_REGEX.match(self.path):
             self.post_restaurant_edit()
+        elif DELETE_REGEX.match(self.path):
+            self.post_restaurant_delete()
 
 
 def main():
