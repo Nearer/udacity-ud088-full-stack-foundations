@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block title %}Restaurants{% endblock %}
 {% block body %}
+<a href="restaurants/new">Make a new restaurant</a><br><br>
 {% for r in restaurants %}
 {% include "restaurant.html" %}
 {% endfor %}
