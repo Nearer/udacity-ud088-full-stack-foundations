@@ -1,4 +1,5 @@
 import cgi
+import re
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 from os import curdir, sep
 
@@ -7,6 +8,7 @@ from jinja2 import Environment, PackageLoader
 from database_setup import DBSession, Restaurant
 
 jinja2_env = Environment(loader=PackageLoader('jinja2_templates', 'templates'))
+EDIT_REGEX = re.compile(r'/restaurants/(\d+)/edit')
 
 
 class WebServerHandler(BaseHTTPRequestHandler):
@@ -22,6 +24,21 @@ class WebServerHandler(BaseHTTPRequestHandler):
         page_str = self.render_str(template, **kwargs)
         self.wfile.write(page_str)
 
+    def send_200_html(self):
+        self.send_response(200)
+        self.send_header('Content-type', 'text/html')
+        self.end_headers()
+
+    def send_redirect(self, path):
+        self.send_response(301)
+        self.send_header('Content-Type', 'text/html')
+        self.send_header('Location', path)
+        self.end_headers()
+
+    def send_301_html(self):
+        self.send_response(301)
+        self.end_headers()
+
     def get_form(self):
         form = cgi.FieldStorage(
             fp=self.rfile,
@@ -30,10 +47,6 @@ class WebServerHandler(BaseHTTPRequestHandler):
                      'CONTENT_TYPE': self.headers['Content-Type'],
                      })
         return form
-
-    def send_301_html(self):
-        self.send_response(301)
-        self.end_headers()
 
     def get_css(self):
         f = open(curdir + sep + self.path)
@@ -52,10 +65,15 @@ class WebServerHandler(BaseHTTPRequestHandler):
         self.send_200_html()
         self.render_page('new_restaurant.html')
 
-    def send_200_html(self):
-        self.send_response(200)
-        self.send_header('Content-type', 'text/html')
-        self.end_headers()
+    def get_restaurant_edit(self):
+        self.send_200_html()
+        session = DBSession()
+        r_id = int(EDIT_REGEX.match(self.path).group(1))
+        r = session.query(Restaurant).get(r_id)
+        if r is None:
+            self.send_error(404, 'Restaurant number {} not found.'.format(r_id))
+        else:
+            self.render_page('edit_restaurant.html', r=r)
 
     def post_restaurants_new(self):
         form = self.get_form()
@@ -67,11 +85,22 @@ class WebServerHandler(BaseHTTPRequestHandler):
             session.commit()
         self.send_redirect('/restaurants')
 
-    def send_redirect(self, path):
-        self.send_response(301)
-        self.send_header('Content-Type', 'text/html')
-        self.send_header('Location', path)
-        self.end_headers()
+    def post_restaurant_edit(self):
+        session = DBSession()
+        r_id = int(EDIT_REGEX.match(self.path).group(1))
+        print '*****************'
+        print r_id
+        r = session.query(Restaurant).get(r_id)
+        if r:
+            form = self.get_form()
+            new_name = form.getvalue('name')
+            if new_name and r.name != new_name:
+                r.name = new_name
+                session.add(r)
+                session.commit()
+            self.send_redirect('/restaurants')
+        else:
+            self.send_error(404, 'Restaurant number {} not found'.format(r_id))
 
     def do_GET(self):
         try:
@@ -79,14 +108,20 @@ class WebServerHandler(BaseHTTPRequestHandler):
                 self.get_restaurants()
             elif self.path.endswith('/restaurants/new'):
                 self.get_restaurants_new()
+            elif EDIT_REGEX.match(self.path):
+                self.get_restaurant_edit()
             elif self.path.endswith('.css'):
                 self.get_css()
+            else:
+                self.send_error(404, 'Path not found: {}'.format(self.path))
         except IOError:
             self.send_error(404, 'File not found: {}'.format(self.path))
 
     def do_POST(self):
         if self.path.endswith('restaurants/new'):
             self.post_restaurants_new()
+        elif EDIT_REGEX.match(self.path):
+            self.post_restaurant_edit()
 
 
 def main():

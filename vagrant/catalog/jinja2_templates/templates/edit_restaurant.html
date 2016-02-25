@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block body %}
+<h1>{{r.name}}</h1>
+<form method="post">
+    <input type="text" placeholder="{{r.name}}" name="name">
+    <input type="submit" value="Rename">
+</form>
+{% endblock %}
