@@ -65,9 +65,12 @@ class WebServerHandler(BaseHTTPRequestHandler):
             r = Restaurant(name=new_name)
             session.add(r)
             session.commit()
+        self.send_redirect('/restaurants')
+
+    def send_redirect(self, path):
         self.send_response(301)
         self.send_header('Content-Type', 'text/html')
-        self.send_header('Location', '/restaurants')
+        self.send_header('Location', path)
         self.end_headers()
 
     def do_GET(self):
