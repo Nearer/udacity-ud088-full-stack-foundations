@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block title %}{{r.name}}{% endblock %}
+{% block body %}
+<h1>{{r.name}}</h1>
+{% for item in r.menu_items %}
+{% include "menu_item.html" %}
+{% endfor%}
+{% endblock %}

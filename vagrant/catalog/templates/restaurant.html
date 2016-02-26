@@ -1,5 +1,5 @@
 <div class="restaurant">
-    <span class="restaurant-name">{{r.name}}</span><br>
+    <a href="{{'/restaurants/{}/'.format(r.id)}}">{{r.name}}</a><br>
     <a href="{{'/restaurants/{}/edit'.format(r.id)}}">Edit</a><br>
     <a href="{{'/restaurants/{}/delete'.format(r.id)}}">Delete</a>
 </div>
