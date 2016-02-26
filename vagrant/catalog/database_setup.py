@@ -1,4 +1,4 @@
-from sqlalchemy import Column, ForeignKey, Integer, String
+from sqlalchemy import Column, ForeignKey, Integer, String, Float
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker
 from sqlalchemy import create_engine
@@ -35,7 +35,7 @@ class MenuItem(Base):
             String(250)
     )
     price = Column(
-            String(8)
+        Float
     )
     restaurant_id = Column(
             Integer,
