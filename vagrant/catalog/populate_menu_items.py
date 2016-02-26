@@ -1,6 +1,6 @@
 import random
 
-from database_setup import DBSession, MenuItem
+from database_setup import DBSession, MenuItem, Restaurant
 
 session = DBSession()
 
@@ -21,11 +21,14 @@ Sausage jerky ground round short loin. Brisket kevin strip steak hamburger. Turd
 Filet mignon tongue ham, landjaeger pastrami jowl meatloaf pork belly. Short loin chuck swine pork chop. Cupim andouille spare ribs doner shank pork meatball, pancetta ribeye short loin pork loin turducken tri-tip tongue. Ham hock meatloaf short loin prosciutto, ham turducken short ribs beef pork chop jowl cow pancetta bresaola venison turkey. Tri-tip landjaeger alcatra chicken cupim. Boudin jowl doner, pastrami porchetta turkey ham hock. Beef ribs leberkas ham hock pork chop, spare ribs meatball boudin.""".split(
     '\n')
 
+restaurants = list(session.query(Restaurant).all())
+
 for item in items:
     m = MenuItem(
         name=item,
         description=random.choice(description_list),
-        price=round(random.uniform(1.0, 5.0), 2)
+        price=round(random.uniform(1.0, 5.0), 2),
+        restaurant=random.choice(restaurants)
     )
     session.add(m)
 
