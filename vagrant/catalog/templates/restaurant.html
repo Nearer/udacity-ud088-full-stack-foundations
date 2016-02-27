@@ -1,5 +1,5 @@
 <div class="restaurant">
-    <a href="{{'/restaurants/{}/'.format(r.id)}}">{{r.name}}</a><br>
-    <a href="{{'/restaurants/{}/edit'.format(r.id)}}">Edit</a><br>
-    <a href="{{'/restaurants/{}/delete'.format(r.id)}}">Delete</a>
+    <a href="{{url_for('restaurant_menu',r_id=r.id)}}">{{r.name}}</a><br>
+    <a href="{{url_for('edit_restaurant',r_id=r.id)}}">Edit</a><br>
+    <a href="{{url_for('delete_restaurant',r_id=r.id)}}">Delete</a>
 </div>
