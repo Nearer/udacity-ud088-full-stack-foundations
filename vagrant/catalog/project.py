@@ -20,17 +20,20 @@ def new_menu_item(r_id):
             name = request.form.get('name', None)
             price = process_price(request.form.get('price', None))
             description = request.form.get('description', None)
+            course = request.form.get('course', None)
             if not name:
                 error = 'Please enter a valid name'
-                return render_template('new_menu_item.html', price=price, description=description, error=error)
+                return render_template('new_menu_item.html', price=price, description=description,
+                                       course=course, error=error)
             else:
-                item = MenuItem(name=name, price=price, description=description, restaurant_id=r.id)
+                item = MenuItem(name=name, price=price, description=description,
+                                course=course, restaurant_id=r.id)
                 session.add(item)
                 session.commit()
                 flash('New item added.')
             return redirect(url_for('restaurant_menu', r_id=r.id))
     else:
-        return render_template('new_menu_item.html', price=None, description=None)
+        return render_template('new_menu_item.html', price=None, description=None, course=None)
 
 
 def process_price(raw_price):
@@ -56,6 +59,7 @@ def edit_menu_item(r_id, item_id):
             name = request.form.get('name', None)
             price = process_price(request.form.get('price', None))
             description = request.form.get('description', None)
+            course = request.form.get('course', None)
             if not name:
                 error = 'Please enter a valid name'
                 return render_template('edit_menu_item.html', item=item, error=error)
@@ -63,6 +67,7 @@ def edit_menu_item(r_id, item_id):
                 item.name = name
                 item.price = price
                 item.description = description
+                item.course = course
                 session.add(item)
                 session.commit()
                 flash('Item successfully edited.')

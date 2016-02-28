@@ -1,7 +1,8 @@
 <div class="menu-item">
     <h3>{{ item.name }}</h3>
     <p class="price">{{'${:,.2f}'.format(item.price) if item and item.price else ''}}</p>
-    <p class="description">{{ item.description }}</p>
+    <p class="course">{{item.course if item.course else ''}}</p>
+    <p class="description">{{ item.description if item.description else ''}}</p>
     <a href="{{url_for('edit_menu_item', r_id=r.id, item_id=item.id)}}">Edit</a>
     <a href="{{url_for('delete_menu_item', r_id=r.id, item_id=item.id)}}">Delete</a>
     <br>

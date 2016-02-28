@@ -7,6 +7,8 @@
     <br>
     <input type="text" placeholder="Enter a price in $" name="price" value="{{price or ''}}">
     <br>
+    <input type="text" value="{{course if course else ''}}" placeholder="Enter for which course" name="course">
+    <br>
     <textarea name="description" placeholder="Enter a description">{{ description or ''}}</textarea>
     <br>
     <input type="submit" value="Add">
