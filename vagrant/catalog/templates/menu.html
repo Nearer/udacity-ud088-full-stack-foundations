@@ -2,6 +2,7 @@
 {% block title %}{{r.name}}{% endblock %}
 {% block body %}
 <h1>{{r.name}}</h1>
+<a href="{{url_for('new_menu_item', r_id=r.id)}}">New Item</a><br>
 {% for item in r.menu_items %}
 {% include "menu_item.html" %}
 {% endfor%}
