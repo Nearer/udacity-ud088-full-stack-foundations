@@ -112,10 +112,13 @@ def new_restaurant():
 def edit_restaurant(r_id):
     if request.method == 'POST':
         name = request.form.get('name', None, type=str)
-        if not name or request.form.get('cancel', None):
+        if request.form.get('cancel', None):
             return redirect(url_for('restaurants'))
         else:
             r = session.query(Restaurant).get(r_id)
+            if not name:
+                error = 'Please change to a valid name.'
+                return render_template('edit_restaurant.html', r=r, error=error)
             if r:
                 r.name = name
                 session.add(r)
@@ -127,7 +130,7 @@ def edit_restaurant(r_id):
     else:
         r = session.query(Restaurant).get(r_id)
         if r:
-            return render_template('edit_restaurant.html', r=r)
+            return render_template('edit_restaurant.html', r=r, error=None)
         else:
             flask.abort(404)
 

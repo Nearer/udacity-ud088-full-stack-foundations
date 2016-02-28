@@ -3,8 +3,9 @@
 {% block body %}
 <h1>{{r.name}}</h1>
 <form method="post">
-    <input type="text" placeholder="{{r.name}}" name="name" maxlength="80">
+    <input type="text" value="{{r.name}}" name="name" maxlength="80"><br>
     <input type="submit" value="Rename">
     <input type="submit" value="Cancel" name="cancel">
 </form>
+<div class="error">{{error or ''}}</div>
 {% endblock %}

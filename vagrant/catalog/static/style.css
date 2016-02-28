@@ -8,3 +8,14 @@
     margin-top: 30px;
 }
 
+.menu-item + .menu-item {
+    margin-top: 60px;
+}
+
+input {
+    width: 100% !important;
+}
+
+.error {
+    color: red;
+}
