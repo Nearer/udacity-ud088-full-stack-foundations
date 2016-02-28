@@ -2,6 +2,7 @@
 {% block title %}Restaurants{% endblock %}
 {% block body %}
 <a href="{{url_for('new_restaurant')}}">Make a new restaurant</a><br><br>
+{% include "flash.html" %}
 {% for r in restaurants %}
 {% include "restaurant.html" %}
 {% endfor %}

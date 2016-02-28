@@ -1,5 +1,5 @@
 import flask
-from flask import Flask, render_template, url_for, redirect, request
+from flask import Flask, render_template, url_for, redirect, request, flash, get_flashed_messages
 import re
 from database_setup import DBSession, Restaurant, MenuItem
 
@@ -11,7 +11,7 @@ app = Flask(__name__)
 @app.route('/restaurants/<int:r_id>/new', methods=['GET', 'POST'])
 def new_menu_item(r_id):
     r = session.query(Restaurant).get(r_id)
-    if not (r):
+    if not r:
         flask.abort(404)
     if request.method == 'POST':
         if request.form.get('cancel', None):
@@ -27,6 +27,7 @@ def new_menu_item(r_id):
                 item = MenuItem(name=name, price=price, description=description, restaurant_id=r.id)
                 session.add(item)
                 session.commit()
+                flash('New item added.')
             return redirect(url_for('restaurant_menu', r_id=r.id))
     else:
         return render_template('new_menu_item.html', price=None, description=None)
@@ -64,6 +65,7 @@ def edit_menu_item(r_id, item_id):
                 item.description = description
                 session.add(item)
                 session.commit()
+                flash('Item successfully edited.')
             return redirect(url_for('restaurant_menu', r_id=r.id))
     else:
         return render_template('edit_menu_item.html', item=item)
@@ -81,6 +83,7 @@ def delete_menu_item(r_id, item_id):
         else:
             session.delete(item)
             session.commit()
+            flash('Item successfully deleted.')
             return redirect(url_for('restaurant_menu', r_id=r.id))
     else:
         return render_template('delete_menu_item.html', item=item)
@@ -99,7 +102,8 @@ def new_restaurant():
             r = Restaurant(name=name)
             session.add(r)
             session.commit()
-            return redirect(url_for('restaurant_menu'), r_id=r.id)
+            flash('New restaurant added.')
+            return redirect(url_for('restaurant_menu', r_id=r.id))
     else:
         return render_template('new_restaurant.html', error=None)
 
@@ -116,6 +120,7 @@ def edit_restaurant(r_id):
                 r.name = name
                 session.add(r)
                 session.commit()
+                flash('Restaurant successfully edited.')
                 return redirect(url_for('restaurants'))
             else:
                 flask.abort(404)
@@ -131,8 +136,10 @@ def edit_restaurant(r_id):
 def delete_restaurant(r_id):
     if request.method == 'POST':
         r = session.query(Restaurant).get(r_id)
-        session.delete(r)
-        session.commit()
+        if r:
+            session.delete(r)
+            session.commit()
+            flash('Restaurant successfully deleted.')
         return redirect(url_for('restaurants'))
     else:
         r = session.query(Restaurant).get(r_id)
@@ -163,5 +170,6 @@ def redirect_to_home():
 
 
 if __name__ == '__main__':
+    app.secret_key = 'ee26b0dd4af7e749aa1a8ee3c10ae9923f618980772e473f8819a5d4940e0db27ac185f8a0e1d5f84f88bc887fd67b143732c304cc5fa9ad8e6f57f50028a8ff'
     app.debug = True
     app.run(host='0.0.0.0', port=5000)
