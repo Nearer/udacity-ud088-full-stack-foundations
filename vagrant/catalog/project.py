@@ -1,5 +1,5 @@
 import flask
-from flask import Flask, render_template, url_for, redirect, request, flash, get_flashed_messages
+from flask import Flask, render_template, url_for, redirect, request, flash, get_flashed_messages, jsonify
 import re
 from database_setup import DBSession, Restaurant, MenuItem
 
@@ -177,6 +177,23 @@ def redirect_to_home():
     return redirect(url_for('restaurants'))
 
 
+@app.route('/restaurants/<int:r_id>/JSON')
+def restaurant_menu_JSON(r_id):
+    r = session.query(Restaurant).get(r_id)
+    if r:
+        return jsonify(MenuItems=[i.serialize for i in r.menu_items])
+    else:
+        flask.abort(404)
+
+
+@app.route('/restaurants/<int:r_id>/<int:item_id>/JSON')
+def menu_item_JSON(r_id, item_id):
+    r = session.query(Restaurant).get(r_id)
+    item = session.query(MenuItem).get(item_id)
+    if r and item:
+        return jsonify(MenuItem=item.serialize)
+    else:
+        flask.abort(404)
 if __name__ == '__main__':
     app.secret_key = 'ee26b0dd4af7e749aa1a8ee3c10ae9923f618980772e473f8819a5d4940e0db27ac185f8a0e1d5f84f88bc887fd67b143732c304cc5fa9ad8e6f57f50028a8ff'
     app.debug = True

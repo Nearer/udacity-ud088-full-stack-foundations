@@ -18,6 +18,12 @@ class Restaurant(Base):
     )
     menu_items = relationship('MenuItem', back_populates='restaurant')
 
+    @property
+    def serialize(self):
+        return {
+            'name': self.name,
+            'id': self.id,
+        }
 
 class MenuItem(Base):
     __tablename__ = 'menu_item'
@@ -43,6 +49,16 @@ class MenuItem(Base):
         ForeignKey('restaurant.id')
     )
     restaurant = relationship('Restaurant', back_populates='menu_items')
+
+    @property
+    def serialize(self):
+        return {
+            'name': self.name,
+            'description': self.description,
+            'id': self.id,
+            'price': '${:,.2f}'.format(self.price),
+            'course': self.course
+        }
 
 
 engine = create_engine('sqlite:///restaurantmenu.db')
