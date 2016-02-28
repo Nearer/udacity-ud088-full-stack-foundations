@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{%block title %}Edit{% endblock %}
+{% block body %}
+<h1>New Item</h1>
+<form method="post">
+    <input type="text" name="name" maxlength="80" placeholder="Enter a name (required)">
+    <br>
+    <input type="text" placeholder="Enter a price in $" name="price" value="{{price or ''}}">
+    <br>
+    <textarea name="description" placeholder="Enter a description">{{ description or ''}}</textarea>
+    <br>
+    <input type="submit" value="Add">
+    <input type="submit" value="Cancel" name="cancel">
+</form>
+<div class="error">{{error}}</div>
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{%block title %}Edit{% endblock %}
+{% block body %}
+<h1>{{item.name}}</h1>
+<form method="post">
+    <input type="text" value="{{item.name}}" name="name" maxlength="80">
+    <br>
+    <input type="text" value="{{'${:,.2f}'.format(item.price) if item.price}}"
+           placeholder="Enter a price in $" name="price">
+    <br>
+    <textarea name="description" placeholder="Enter a description">{{ item.description }}</textarea>
+    <br>
+    <input type="submit" value="Edit">
+    <input type="submit" value="Cancel" name="cancel">
+</form>
+<div class="error">{{error}}</div>
+{% endblock %}
