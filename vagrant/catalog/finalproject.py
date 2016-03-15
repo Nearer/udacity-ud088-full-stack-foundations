@@ -1,4 +1,4 @@
-from flask import Flask, render_template, url_for
+from flask import Flask, render_template, url_for, abort
 from database_setup import Restaurant, MenuItem, DBSession
 
 app = Flask(__name__)
@@ -30,7 +30,11 @@ def deleteRestaurant(restaurant_id):
 @app.route('/restaurant/<int:restaurant_id>')
 @app.route('/restaurant/<int:restaurant_id>/menu')
 def showMenu(restaurant_id):
-    return 'This page will have the menu for restaurant # {}'.format(restaurant_id)
+    r = session.query(Restaurant).get(restaurant_id)
+    if r:
+        return render_template('menu.html', r=r)
+    else:
+        abort(404)
 
 
 @app.route('/restaurant/<int:restaurant_id>/menu/new')

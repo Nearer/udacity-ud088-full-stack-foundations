@@ -1,14 +1,17 @@
-body {
-    background-color: #eee;
-}
-
 .yellow-box {
     border: 2px solid #bbbb55;
     border-radius: 5px;
-    background-color: #f4e7b0;
+    background: #f4e7b0;
     padding: 5px;
 }
 
-.restaurant + .restaurant {
+.white-box {
+    border: 2px solid #eee;
+    border-radius: 5px;
+    background: #fff;
+    padding: 5px;
+}
+
+.spacer + .spacer {
     margin-top: 30px;
 }

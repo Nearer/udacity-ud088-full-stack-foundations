@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}{{r.name}}{% endblock %}
+{% block body %}
+<a href="{{url_for('showRestaurants')}}">Go back</a>
+<h1 class="text-center">{{r.name}}</h1><br>
+<h3 class="text-center">Menu Items</h3>
+<hr>
+{% if r.menu_items %}
+<div class="yellow-box">
+    {% for item in r.menu_items %}
+    <div class="spacer">
+        {% include "menu_item.html" %}
+    </div>
+    {% endfor%}
+</div>
+{% else %}
+<h1 class="text-center">
+    <small>No Menu Items Listed</small>
+</h1>
+{% endif %}
+{% endblock %}

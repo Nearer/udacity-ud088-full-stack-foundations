@@ -3,11 +3,11 @@
 {% block body %}
 <div class="row text-center">
     <h1>Restaurants</h1>
-    <br>
+    <hr>
 </div>
 <div class="yellow-box">
     {% for r in restaurants %}
-    <div class="restaurant">
+    <div class="spacer">
         {% include "restaurant.html" %}
     </div>
     {% endfor %}

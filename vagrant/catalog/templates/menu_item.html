@@ -1,0 +1,32 @@
+<div class="white-box">
+    <div class="row">
+        <div class="col-md-1">
+            <label class="pull-right">Name:</label>
+        </div>
+        <div class="col-md-11">
+            <p>{{item.name if item.name else 'None'}}</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-1">
+            <label class="pull-right">Price:</label>
+        </div>
+        <div class="col-md-11">
+            <p>{{'${:,.2f}'.format(item.price) if item.price else 'None'}}</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-1">
+            <label class="pull-right">Course:</label>
+        </div>
+        <div class="col-md-11">
+            <p>{{item.course or 'None'}}</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-1">
+            <label class="pull-right">Description:</label>
+        </div>
+    </div>
+    <p class="yellow-box">{{item.description or 'None'}}</p>
+</div>
