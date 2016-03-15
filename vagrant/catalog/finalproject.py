@@ -1,12 +1,15 @@
-from flask import Flask
+from flask import Flask, render_template, url_for
+from database_setup import Restaurant, MenuItem, DBSession
 
 app = Flask(__name__)
+session = DBSession()
 
 
 @app.route('/')
 @app.route('/restaurants/')
 def showRestaurants():
-    return 'This page with be for displaying all the restaurants'
+    restaurants = session.query(Restaurant)[:10]
+    return render_template('restaurants.html', restaurants=restaurants)
 
 
 @app.route('/restaurant/new')
