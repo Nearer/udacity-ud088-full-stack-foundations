@@ -1,7 +1,14 @@
 {% extends "base.html" %}
 {% block title %}{{r.name}}{% endblock %}
 {% block body %}
-<a href="{{url_for('showRestaurants')}}">Go back</a>
+<br>
+<div class="row">
+    <a class="btn btn-default col-md-1" href="{{url_for('showRestaurants')}}">Go back</a>
+    <a class="btn btn-success col-md-2 col-md-offset-7"
+       href="{{url_for('editRestaurant', restaurant_id=r.id)}}">Edit Restaurant</a>
+    <a class="btn btn-danger col-md-2"
+       href="{{url_for('deleteRestaurant', restaurant_id=r.id)}}">Delete Restaurant</a>
+</div>
 <h1 class="text-center">{{r.name}}</h1><br>
 {% include "flash.html" %}
 <h3 class="text-center">Menu Items</h3>
