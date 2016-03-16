@@ -5,6 +5,8 @@ from sqlalchemy.orm import relationship, sessionmaker
 
 Base = declarative_base()
 
+COURSES = ('Appetizer', 'Entree', 'Dessert', 'Beverage')
+
 
 class Restaurant(Base):
     __tablename__ = 'restaurant'
@@ -24,6 +26,7 @@ class Restaurant(Base):
             'name': self.name,
             'id': self.id,
         }
+
 
 class MenuItem(Base):
     __tablename__ = 'menu_item'
