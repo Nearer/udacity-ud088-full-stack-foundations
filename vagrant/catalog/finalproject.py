@@ -44,7 +44,7 @@ def editRestaurant(restaurant_id):
             r.name = name
             session.add(r)
             session.commit()
-            flash('Successfully edited restaurant.')
+            flash('Successfully edited restaurant "{}".'.format(r.name))
             return redirect(url_for('showMenu', restaurant_id=r.id))
     else:
         return render_template('editrestaurant.html', r=r)
@@ -94,12 +94,11 @@ def newMenuItem(restaurant_id):
         price = process_price(request.form.get('price', None, type=str))
         course = request.form.get('course', None, type=str)
         description = request.form.get('description', None, type=str)
-        error = False
         if not name:
             flash('You must enter a  name between 1-80 characters.')
             return render_template('newmenuitem.html', r=r, COURSES=COURSES, name=name,
                                    price=price, selected=course, description=description,
-                                   error=error)
+                                   error=True)
         else:
             item = MenuItem(name=name, price=price, description=description,
                             course=course, restaurant_id=r.id)
@@ -113,13 +112,46 @@ def newMenuItem(restaurant_id):
 
 @app.route('/restaurant/<int:restaurant_id>/menu/<int:menu_id>/edit', methods=['GET', 'POST'])
 def editMenuItem(restaurant_id, menu_id):
-    return 'This page is for editing menu item # {}'.format(menu_id)
-
+    r = session.query(Restaurant).get(restaurant_id)
+    item = session.query(MenuItem).get(menu_id)
+    if not r and item:
+        abort(404)
+    elif request.method == 'POST':
+        name = request.form.get('name', None, type=str)
+        price = process_price(request.form.get('price', None, type=str))
+        course = request.form.get('course', None, type=str)
+        description = request.form.get('description', None, type=str)
+        if not name:
+            flash('You must enter a  name between 1-80 characters.')
+            return render_template('editmenuitem.html', r=r, COURSES=COURSES, name=item.name,
+                                   price=price, selected=course, description=description,
+                                   error=True)
+        else:
+            if name != item.name or price != item.price or course != item.course or description != item.description:
+                item.name = name
+                item.price = price
+                item.description = description
+                item.course = course
+                session.add(item)
+                session.commit()
+                flash('Edited item "{}".'.format(item.name))
+            return redirect(url_for('showMenu', restaurant_id=r.id))
+    else:
+        return render_template('editmenuitem.html', r=r, item=item, COURSES=COURSES)
 
 @app.route('/restaurant/<int:restaurant_id>/menu/<int:menu_id>/delete', methods=['GET', 'POST'])
 def deleteMenuItem(restaurant_id, menu_id):
-    return 'This page is for deleting menu item # {}'.format(menu_id)
-
+    r = session.query(Restaurant).get(restaurant_id)
+    item = session.query(MenuItem).get(menu_id)
+    if not r and item:
+        abort(404)
+    elif request.method == 'POST':
+        session.delete(item)
+        session.commit()
+        flash('Successfully deleted item.')
+        return redirect(url_for('showMenu', restaurant_id=r.id))
+    else:
+        return render_template('deletemenuitem.html', r=r, item=item)
 
 if __name__ == '__main__':
     app.secret_key = 'ee26b0dd4af7e749aa1a8ee3c10ae9923f618980772e473f8819a5d4940e0db27ac185f8a0e1d5f84f88bc887fd67b143732c304cc5fa9ad8e6f57f50028a8ff'
