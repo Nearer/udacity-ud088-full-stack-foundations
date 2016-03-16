@@ -59,7 +59,7 @@ class MenuItem(Base):
             'name': self.name,
             'description': self.description,
             'id': self.id,
-            'price': '${:,.2f}'.format(self.price),
+            'price': '${:,.2f}'.format(self.price) if self.price else None,
             'course': self.course
         }
 

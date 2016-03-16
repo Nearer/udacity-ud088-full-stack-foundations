@@ -1,5 +1,6 @@
 import re
-from flask import Flask, render_template, url_for, abort, request, flash, get_flashed_messages, redirect
+from flask import Flask, render_template, url_for, abort, request, flash
+from flask import get_flashed_messages, redirect, jsonify
 from database_setup import Restaurant, MenuItem, DBSession, COURSES
 
 app = Flask(__name__)
@@ -75,7 +76,7 @@ def showMenu(restaurant_id):
 
 
 def process_price(raw_price):
-    us_regex = re.compile(r'^\$?(\d*\.?\d+)$')
+    us_regex = re.compile(r'^(\d*\.?\d+)$')
     if us_regex.match(raw_price):
         price_string = us_regex.match(raw_price).group(1)
         try:
@@ -139,6 +140,7 @@ def editMenuItem(restaurant_id, menu_id):
     else:
         return render_template('editmenuitem.html', r=r, item=item, COURSES=COURSES)
 
+
 @app.route('/restaurant/<int:restaurant_id>/menu/<int:menu_id>/delete', methods=['GET', 'POST'])
 def deleteMenuItem(restaurant_id, menu_id):
     r = session.query(Restaurant).get(restaurant_id)
@@ -152,6 +154,26 @@ def deleteMenuItem(restaurant_id, menu_id):
         return redirect(url_for('showMenu', restaurant_id=r.id))
     else:
         return render_template('deletemenuitem.html', r=r, item=item)
+
+
+@app.route('/restaurant/<int:restaurant_id>/JSON')
+def restaurant_menu_JSON(restaurant_id):
+    r = session.query(Restaurant).get(restaurant_id)
+    if r:
+        return jsonify(MenuItems=[i.serialize for i in r.menu_items])
+    else:
+        abort(404)
+
+
+@app.route('/restaurant/<int:restaurant_id>/menu/<int:menu_id>/JSON')
+def menu_item_JSON(restaurant_id, menu_id):
+    r = session.query(Restaurant).get(restaurant_id)
+    item = session.query(MenuItem).get(menu_id)
+    if r and item:
+        return jsonify(MenuItem=item.serialize)
+    else:
+        abort(404)
+
 
 if __name__ == '__main__':
     app.secret_key = 'ee26b0dd4af7e749aa1a8ee3c10ae9923f618980772e473f8819a5d4940e0db27ac185f8a0e1d5f84f88bc887fd67b143732c304cc5fa9ad8e6f57f50028a8ff'
