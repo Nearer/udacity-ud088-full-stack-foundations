@@ -29,9 +29,25 @@ def newRestaurant():
         return render_template('newrestaurant.html')
 
 
-@app.route('/restaurant/<int:restaurant_id>/delete')
+@app.route('/restaurant/<int:restaurant_id>/delete', methods=['GET', 'POST'])
 def editRestaurant(restaurant_id):
-    return 'This page will be for editing restaurant # {}'.format(restaurant_id)
+    r = session.query(Restaurant).get(restaurant_id)
+    if not r:
+        abort(404)
+    elif request.method == 'POST':
+        name = request.form.get('name', None, type=str)
+        if not name:
+            flash('You must enter a new name between 1-80 characters.')
+            return render_template('newrestaurant.html', error=True, r=r)
+        else:
+            r.name = name
+            session.add(r)
+            session.commit()
+            flash('Successfully edited restaurant.')
+            return redirect(url_for('showMenu', restaurant_id=r.id))
+    else:
+        return render_template('editrestaurant.html', r=r)
+
 
 
 @app.route('/restaurant/<int:restaurant_id>/edit')
