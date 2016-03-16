@@ -5,7 +5,7 @@ from sqlalchemy.orm import relationship, sessionmaker
 
 Base = declarative_base()
 
-COURSES = ('Appetizer', 'Entree', 'Dessert', 'Beverage')
+COURSES = ('None', 'Appetizer', 'Entree', 'Dessert', 'Beverage')
 
 
 class Restaurant(Base):
