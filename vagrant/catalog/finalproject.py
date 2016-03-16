@@ -1,4 +1,4 @@
-from flask import Flask, render_template, url_for, abort
+from flask import Flask, render_template, url_for, abort, request, flash, get_flashed_messages, redirect
 from database_setup import Restaurant, MenuItem, DBSession
 
 app = Flask(__name__)
@@ -8,13 +8,25 @@ session = DBSession()
 @app.route('/')
 @app.route('/restaurants/')
 def showRestaurants():
-    restaurants = session.query(Restaurant)[:10]
+    restaurants = session.query(Restaurant).all()
     return render_template('restaurants.html', restaurants=restaurants)
 
 
-@app.route('/restaurant/new')
+@app.route('/restaurant/new', methods=['GET', 'POST'])
 def newRestaurant():
-    return 'This page will be for making a new restaurant'
+    if request.method == 'POST':
+        name = request.form.get('name', None, type=str)
+        if not name:
+            flash('You must enter a name between 1-80 characters.')
+            return render_template('newrestaurant.html', error=True)
+        else:
+            r = Restaurant(name=name)
+            session.add(r)
+            session.commit()
+            flash('New Restaurant added')
+            return redirect(url_for('showRestaurants'))
+    else:
+        return render_template('newrestaurant.html')
 
 
 @app.route('/restaurant/<int:restaurant_id>/delete')
@@ -53,5 +65,6 @@ def deleteMenuItem(restaurant_id, menu_id):
 
 
 if __name__ == '__main__':
+    app.secret_key = 'ee26b0dd4af7e749aa1a8ee3c10ae9923f618980772e473f8819a5d4940e0db27ac185f8a0e1d5f84f88bc887fd67b143732c304cc5fa9ad8e6f57f50028a8ff'
     app.debug = True
     app.run(host='0.0.0.0', port=5000)

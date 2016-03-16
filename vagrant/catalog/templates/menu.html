@@ -3,6 +3,7 @@
 {% block body %}
 <a href="{{url_for('showRestaurants')}}">Go back</a>
 <h1 class="text-center">{{r.name}}</h1><br>
+{% include "flash.html" %}
 <h3 class="text-center">Menu Items</h3>
 <hr>
 {% if r.menu_items %}
