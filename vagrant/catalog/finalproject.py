@@ -29,7 +29,7 @@ def newRestaurant():
         return render_template('newrestaurant.html')
 
 
-@app.route('/restaurant/<int:restaurant_id>/delete', methods=['GET', 'POST'])
+@app.route('/restaurant/<int:restaurant_id>/edit', methods=['GET', 'POST'])
 def editRestaurant(restaurant_id):
     r = session.query(Restaurant).get(restaurant_id)
     if not r:
@@ -49,10 +49,18 @@ def editRestaurant(restaurant_id):
         return render_template('editrestaurant.html', r=r)
 
 
-
-@app.route('/restaurant/<int:restaurant_id>/edit')
+@app.route('/restaurant/<int:restaurant_id>/delete', methods=['GET', 'POST'])
 def deleteRestaurant(restaurant_id):
-    return 'This page will be for deleting restaurant # {}'.format(restaurant_id)
+    r = session.query(Restaurant).get(restaurant_id)
+    if not r:
+        abort(404)
+    elif request.method == 'POST':
+        session.delete(r)
+        session.commit()
+        flash('Successfully deleted restaurant.')
+        return redirect(url_for('showRestaurants'))
+    else:
+        return render_template('deleterestaurant.html', r=r)
 
 
 @app.route('/restaurant/<int:restaurant_id>')
@@ -65,17 +73,17 @@ def showMenu(restaurant_id):
         abort(404)
 
 
-@app.route('/restaurant/<int:restaurant_id>/menu/new')
+@app.route('/restaurant/<int:restaurant_id>/menu/new', methods=['GET', 'POST'])
 def newMenuItem(restaurant_id):
     return 'This page is for adding a menu item to restaurant # {}'.format(restaurant_id)
 
 
-@app.route('/restaurant/<int:restaurant_id>/menu/<int:menu_id>/edit')
+@app.route('/restaurant/<int:restaurant_id>/menu/<int:menu_id>/edit', methods=['GET', 'POST'])
 def editMenuItem(restaurant_id, menu_id):
     return 'This page is for editing menu item # {}'.format(menu_id)
 
 
-@app.route('/restaurant/<int:restaurant_id>/menu/<int:menu_id>/delete')
+@app.route('/restaurant/<int:restaurant_id>/menu/<int:menu_id>/delete', methods=['GET', 'POST'])
 def deleteMenuItem(restaurant_id, menu_id):
     return 'This page is for deleting menu item # {}'.format(menu_id)
 

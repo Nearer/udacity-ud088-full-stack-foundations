@@ -12,6 +12,8 @@
 <h1 class="text-center">{{r.name}}</h1><br>
 {% include "flash.html" %}
 <h3 class="text-center">Menu Items</h3>
+<a class="btn btn-primary pull-right" href="{{url_for('newMenuItem', restaurant_id=r.id)}}">Add a New Menu Item</a>
+<br>
 <hr>
 {% if r.menu_items %}
 <div class="yellow-box">
