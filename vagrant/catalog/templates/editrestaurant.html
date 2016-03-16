@@ -8,11 +8,9 @@
 <form method="post">
     <div class="form-group">
         <div class="yellow-box">
-            <div class="input-group">
-                <span class="input-group-addon" id="name-addon">Name</span>
+                <label class="control-label">Name</label>
                 <input class=" form-control" type="text" placeholder="Enter New Restaurant Name Here"
-                       name="name" maxlength="80" aria-describedby="name-addon" value="{{r.name if r else ''}}">
-            </div>
+                       name="name" maxlength="80" value="{{r.name if r else ''}}">
         </div>
     </div>
     <br>

@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{%block title %}New Menu Item for {{r.name}}{% endblock %}
+{% block body %}
+<div class="row text-center">
+    <h1>Add a New Menu Item for {{r.name}}</h1>
+</div>
+<hr>
+<div class="row yellow-box">
+    <form method="post">
+        <div class="form-group">
+            <label class="control-label">Name</label>
+            <input class=" form-control" type="text" placeholder="Enter Name Here"
+                   name="name" maxlength="80">
+        </div>
+        <br>
+        <div class="form-group">
+            <label class="control-label">Price (in Dollars)</label>
+            <div class="input-group">
+                <span class="input-group-addon">$</span>
+                <input class=" form-control" type="text" placeholder="Enter Price Here"
+                       name="price" value="{{price}}">
+            </div>
+        </div>
+        <br>
+        <div class="form-group">
+            <label class="control-label">Course</label>
+            <select class=" form-control" name="course">
+                {% for course in COURSES %}
+                <option {{
+                'selected' if course == selected else ''}}>{{course}}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <br>
+        <div class="form-group">
+            <label class="control-label">Description</label>
+        <textarea class="form-control" rows="3" name="description"
+                  placeholder="Enter a description">{{description}}</textarea>
+        </div>
+        <br>
+        <div class="form-group">
+            <input type="submit" value="Add" class="btn btn-primary col-md-9">
+            <a class="btn btn-danger col-md-3" href="{{url_for('showMenu', restaurant_id=r.id)}}">Cancel</a>
+        </div>
+    </form>
+</div>
+<br>
+{% include "flash.html" %}
+{% endblock %}

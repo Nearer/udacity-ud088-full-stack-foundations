@@ -1,5 +1,6 @@
+import re
 from flask import Flask, render_template, url_for, abort, request, flash, get_flashed_messages, redirect
-from database_setup import Restaurant, MenuItem, DBSession
+from database_setup import Restaurant, MenuItem, DBSession, COURSES
 
 app = Flask(__name__)
 session = DBSession()
@@ -73,9 +74,41 @@ def showMenu(restaurant_id):
         abort(404)
 
 
+def process_price(raw_price):
+    us_regex = re.compile(r'^\$?(\d*\.?\d+)$')
+    if us_regex.match(raw_price):
+        price_string = us_regex.match(raw_price).group(1)
+        try:
+            return float(price_string)
+        except:
+            return None
+
+
 @app.route('/restaurant/<int:restaurant_id>/menu/new', methods=['GET', 'POST'])
 def newMenuItem(restaurant_id):
-    return 'This page is for adding a menu item to restaurant # {}'.format(restaurant_id)
+    r = session.query(Restaurant).get(restaurant_id)
+    if not r:
+        abort(404)
+    elif request.method == 'POST':
+        name = request.form.get('name', None, type=str)
+        price = process_price(request.form.get('price', None, type=str))
+        course = request.form.get('course', None, type=str)
+        description = request.form.get('description', None, type=str)
+        error = False
+        if not name:
+            flash('You must enter a  name between 1-80 characters.')
+            return render_template('newmenuitem.html', r=r, COURSES=COURSES, name=name,
+                                   price=price, selected=course, description=description,
+                                   error=error)
+        else:
+            item = MenuItem(name=name, price=price, description=description,
+                            course=course, restaurant_id=r.id)
+            session.add(item)
+            session.commit()
+            flash('New item added.')
+            return redirect(url_for('showMenu', restaurant_id=r.id))
+    else:
+        return render_template('newmenuitem.html', r=r, COURSES=COURSES)
 
 
 @app.route('/restaurant/<int:restaurant_id>/menu/<int:menu_id>/edit', methods=['GET', 'POST'])

@@ -1,18 +1,16 @@
 {% extends "base.html" %}
-{%block title %}New{% endblock %}
+{%block title %}New Restaurant{% endblock %}
 {% block body %}
 <div class="row text-center">
     <h1>Add a New Restaurant</h1>
 </div>
 <hr>
-<form method="post">
+<form method="post" class="form-horizontal">
     <div class="form-group">
         <div class="yellow-box">
-            <div class="input-group">
-                <span class="input-group-addon" id="name-addon">Name</span>
-                <input class=" form-control" type="text" placeholder="Enter Restaurant Name Here"
-                       name="name" maxlength="80" aria-describedby="name-addon">
-            </div>
+            <label class="control-label">Name</label>
+            <input class=" form-control" type="text" placeholder="Enter Restaurant Name Here"
+                   name="name" maxlength="80">
         </div>
     </div>
     <br>
